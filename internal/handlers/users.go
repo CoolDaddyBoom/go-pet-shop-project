@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"go-pet-shop/models"
+	"go-pet-shop/internal/models"
 	"log/slog"
 	"net/http"
 

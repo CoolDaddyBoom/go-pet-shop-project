@@ -3,7 +3,7 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"go-pet-shop/models"
+	"go-pet-shop/internal/models"
 )
 
 func (s *Storage) GetAllUsers() ([]models.User, error) {
