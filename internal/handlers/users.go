@@ -25,7 +25,7 @@ func GetAllUsers(log *slog.Logger, users Users) http.HandlerFunc {
 			slog.String("request_id", middleware.GetReqID(r.Context())),
 		)
 
-		users, err := users.GetAllUsers()
+		usersList, err := users.GetAllUsers()
 
 		if err != nil {
 			log.Error("failed to get users", slog.Any("error", err))
@@ -35,7 +35,7 @@ func GetAllUsers(log *slog.Logger, users Users) http.HandlerFunc {
 
 		log.Info("Retrieved users successfully", slog.String("url", r.URL.String()))
 
-		render.JSON(w, r, users)
+		render.JSON(w, r, usersList)
 	}
 }
 
@@ -78,7 +78,7 @@ func GetUserByEmail(log *slog.Logger, users Users) http.HandlerFunc {
 			slog.String("request_id", middleware.GetReqID(r.Context())),
 		)
 
-		email := chi.URLParam(r, "id")
+		email := chi.URLParam(r, "email")
 		if email == "" {
 			log.Error("empty id")
 			http.Error(w, "invalid request: id is required", http.StatusBadRequest)

@@ -27,6 +27,7 @@ type OrderItem struct {
 	OrderID   int
 	ProductID int
 	Quantity  int
+	Price     float64
 }
 
 type Transactions struct {
@@ -35,4 +36,9 @@ type Transactions struct {
 	Amount    float64
 	Status    string
 	CreatedAt time.Time
+}
+
+type PlaceOrderRequest struct {
+	UserEmail string
+	Items     []OrderItem
 }

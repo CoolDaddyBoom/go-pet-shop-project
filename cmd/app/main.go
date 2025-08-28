@@ -62,6 +62,9 @@ func main() {
 	router.Get("/orders/{id}/items", handlers.GetOrderItemsByOrderID(log, storage))
 	router.Post("/orders/{id}/items", handlers.AddOrderItem(log, storage))
 
+	// Place_orders handlers
+	router.Post("/checkout", handlers.PlaceOrder(log, storage))
+
 	// Оборачиваем роутер в middleware
 	handler := logger.LoggingMiddleware(log, router)
 
