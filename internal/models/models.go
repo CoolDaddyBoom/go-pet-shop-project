@@ -42,3 +42,20 @@ type PlaceOrderRequest struct {
 	UserEmail string
 	Items     []OrderItem
 }
+
+type OrderDetail struct {
+	OrderID       int
+	UserEmail     string
+	TotalPrice    float64
+	CreatedAt     time.Time
+	ProductName   string
+	Quantity      int
+	TransactionID int
+	Status        string
+}
+
+type PopularProduct struct {
+	ProductID  int
+	Name       string
+	TotalSales int
+}

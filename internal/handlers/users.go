@@ -14,6 +14,7 @@ type Users interface {
 	GetAllUsers() ([]models.User, error)
 	CreateUser(user models.User) error
 	GetUserByEmail(email string) (models.User, error)
+	GetUserOrderHistory(email string) ([]models.OrderDetail, error)
 }
 
 func GetAllUsers(log *slog.Logger, users Users) http.HandlerFunc {
@@ -96,5 +97,32 @@ func GetUserByEmail(log *slog.Logger, users Users) http.HandlerFunc {
 		log.Info("User is retrieved successfully", slog.String("url", r.URL.String()))
 
 		render.JSON(w, r, user)
+	}
+}
+
+func GetUserOrderHistory(log *slog.Logger, users Users) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		const fn = "handlers.users.GetUserOrderHistory"
+
+		log = log.With(
+			slog.String("fn", fn),
+			slog.String("request_id", middleware.GetReqID(r.Context())),
+		)
+
+		email := chi.URLParam(r, "email")
+		if email == "" {
+			log.Error("email parameter is missing")
+			http.Error(w, "missing email", http.StatusBadRequest)
+			return
+		}
+
+		history, err := users.GetUserOrderHistory(email)
+		if err != nil {
+			log.Error("failed to get order history", slog.Any("error", err))
+			http.Error(w, "failed to get order history", http.StatusInternalServerError)
+			return
+		}
+
+		render.JSON(w, r, history)
 	}
 }

@@ -76,3 +76,31 @@ func (s *Storage) GetProductByID(id int) (models.Product, error) {
 	}
 	return product, nil
 }
+
+func (s *Storage) GetPopularProducts() ([]models.PopularProduct, error) {
+	const query = `SELECT p.id, p.name, 
+	    SUM(oi.quantity) AS total_sales
+        FROM order_items oi
+        JOIN products p ON oi.product_id = p.id
+        GROUP BY p.id, p.name
+        ORDER BY total_sales DESC
+        LIMIT 10
+    `
+
+	rows, err := s.db.Query(context.Background(), query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var products []models.PopularProduct
+	for rows.Next() {
+		var pp models.PopularProduct
+		if err := rows.Scan(&pp.ProductID, &pp.Name, &pp.TotalSales); err != nil {
+			return nil, err
+		}
+		products = append(products, pp)
+	}
+
+	return products, nil
+}

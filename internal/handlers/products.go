@@ -44,6 +44,7 @@ type Products interface {
 	DeleteProduct(id int) error
 	UpdateProduct(product models.Product) error
 	GetProductByID(id int) (models.Product, error)
+	GetPopularProducts() ([]models.PopularProduct, error)
 }
 
 func GetAllProducts(log *slog.Logger, products Products) http.HandlerFunc {
@@ -200,5 +201,25 @@ func GetProductByID(log *slog.Logger, products Products) http.HandlerFunc {
 		log.Info("A product is retrieved successfully", slog.String("url", r.URL.String()))
 
 		render.JSON(w, r, product)
+	}
+}
+
+func GetPopularProducts(log *slog.Logger, products Products) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		const fn = "handlers.products.GetPopularProducts"
+
+		log = log.With(
+			slog.String("fn", fn),
+			slog.String("request_id", middleware.GetReqID(r.Context())),
+		)
+
+		products, err := products.GetPopularProducts()
+		if err != nil {
+			log.Error("failed to get popular products", slog.Any("error", err))
+			http.Error(w, "failed to get popular products", http.StatusInternalServerError)
+			return
+		}
+
+		render.JSON(w, r, products)
 	}
 }
